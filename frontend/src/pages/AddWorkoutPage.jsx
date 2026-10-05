@@ -6,6 +6,9 @@ const AddWorkoutPage = () => {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
 
+  const user = JSON.parse(localStorage.getItem("workoutUser"));
+  const token = user ? user.token : null;
+
   const submitForm = async (e) => {
     e.preventDefault();
     const workout = Object.fromEntries(new FormData(e.currentTarget));
@@ -15,7 +18,10 @@ const AddWorkoutPage = () => {
     try {
       const response = await fetch("/api/workouts", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(workout),
       });
       const data = await response.json();
@@ -43,9 +49,18 @@ const AddWorkoutPage = () => {
         <label htmlFor="description">Description:</label>
         <textarea id="description" name="description" required></textarea>
         <label htmlFor="price">Price:</label>
-        <input id="price" name="price" type="number" step="0.01" min="0" required />
+        <input
+          id="price"
+          name="price"
+          type="number"
+          step="0.01"
+          min="0"
+          required
+        />
         {error && <p role="alert">{error}</p>}
-        <button disabled={pending}>{pending ? "Adding..." : "Add Workout"}</button>
+        <button disabled={pending}>
+          {pending ? "Adding..." : "Add Workout"}
+        </button>
       </form>
     </div>
   );

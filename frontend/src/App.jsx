@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import SignupPage from "./pages/SignupPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
@@ -19,6 +19,8 @@ const App = () => {
       return null;
     }
   });
+  const isAuthenticated = user && user.token ? true : false;
+
   const loginUser = (value) => {
     localStorage.setItem("workoutUser", JSON.stringify(value));
     setUser(value);
@@ -36,9 +38,12 @@ const App = () => {
             <Route path="/signup" element={<SignupPage onLogin={loginUser} />} />
             <Route path="/login" element={<LoginPage onLogin={loginUser} />} />
             <Route path="/" element={<Home />} />
-            <Route path="/add-workout" element={<AddWorkoutPage />} />
-            <Route path="/workouts/:id" element={<WorkoutPage />} />
-            <Route path="/edit-workout/:id" element={<EditWorkoutPage />} />
+            <Route
+              path="/add-workout"
+              element={isAuthenticated ? <AddWorkoutPage /> : <Navigate to="/login" />}
+            />
+            <Route path="/workouts/:id" element={<WorkoutPage isAuthenticated={isAuthenticated} />} />
+            <Route path="/edit-workout/:id" element={isAuthenticated ? <EditWorkoutPage /> : <Navigate to="/login" />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>

@@ -7,23 +7,19 @@ const WorkoutListings = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const controller = new AbortController();
-    const load = async () => {
+    const fetchWorkouts = async () => {
       try {
-        const response = await fetch("/api/workouts", { signal: controller.signal });
+        const response = await fetch("/api/workouts");
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Could not load workouts");
         setWorkouts(data);
         setLoading(false);
       } catch (err) {
-        if (err.name !== "AbortError") {
-          setError(err.message);
-          setLoading(false);
-        }
+        setError(err.message);
+        setLoading(false);
       }
     };
-    load();
-    return () => controller.abort();
+    fetchWorkouts();
   }, []);
 
   if (loading) return <p>Loading workouts...</p>;

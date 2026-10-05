@@ -8,22 +8,23 @@ const EditWorkoutPage = () => {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
 
+  const user = JSON.parse(localStorage.getItem("workoutUser"));
+  const token = user ? user.token : null;
+
   useEffect(() => {
-    const controller = new AbortController();
-    const load = async () => {
+    const fetchWorkout = async () => {
       setWorkout(null);
       setError("");
       try {
-        const response = await fetch(`/api/workouts/${id}`, { signal: controller.signal });
+        const response = await fetch(`/api/workouts/${id}`);
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Could not load workout");
         setWorkout(data);
       } catch (err) {
-        if (err.name !== "AbortError") setError(err.message);
+        setError(err.message);
       }
     };
-    load();
-    return () => controller.abort();
+    fetchWorkout();
   }, [id]);
 
   const submitForm = async (event) => {
@@ -35,7 +36,10 @@ const EditWorkoutPage = () => {
     try {
       const response = await fetch(`/api/workouts/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(values),
       });
       const data = await response.json();
