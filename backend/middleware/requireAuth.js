@@ -12,8 +12,8 @@ const requireAuth = async (req, res, next) => {
   const token = authorization.split(" ")[1];
 
   try {
-    const { _id } = jwt.verify(token, config.SECRET); //process.env.SECRET ?
-    const user = await User.findById(_id);
+    const { id } = jwt.verify(token, config.SECRET); //process.env.SECRET ?
+    const user = await User.findById(id);
     if (!user) {
       return res.status(401).json({
         error: "Request not authorized",
