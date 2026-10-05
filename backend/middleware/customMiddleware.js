@@ -19,10 +19,11 @@ const errorHandler = (error, req, res, next) => {
 const requestLogger = (req, res, next) => {
   logger.info('Method:', req.method);
   logger.info('Path:  ', req.path);
-  logger.info('Body:  ', req.body);
+  const body = req.body ? { ...req.body } : undefined;
+  if (body && Object.hasOwn(body, 'password')) body.password = '[redacted]';
+  logger.info('Body:  ', body);
   logger.info('---');
   next();
 };
 
 module.exports = { unknownEndpoint, errorHandler, requestLogger };
-
