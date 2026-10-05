@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5001;
 
 const MONGO_URI = process.env.NODE_ENV === 'test'
   ? process.env.TEST_MONGO_URI
